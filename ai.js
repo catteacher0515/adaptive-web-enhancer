@@ -50,6 +50,12 @@ async function generatePageSummary(pageText) {
     return data.choices[0].message.content.trim();
   } catch (error) {
     console.error('DeepSeek API 调用失败:', error);
+
+    // CORS 错误特殊提示
+    if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+      return `❌ 网络请求失败\n\n💡 如果你是用 file:// 协议直接打开的 HTML 文件，浏览器会阻止跨域请求。\n\n解决方案：\n1. 在项目目录运行：python3 -m http.server 8080\n2. 访问：http://localhost:8080`;
+    }
+
     return `❌ 生成摘要失败: ${error.message}`;
   }
 }
