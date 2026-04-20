@@ -101,17 +101,8 @@
     </div>
   </div>
 
-  <!-- 脚本加载：内联默认配置 → config.js → ai.js → script.js -->
-  <script>
-    if (typeof CONFIG === 'undefined') {
-      var CONFIG = {
-        DEEPSEEK_API_KEY: 'your-api-key-here',
-        DEEPSEEK_API_URL: 'https://api.deepseek.com/v1/chat/completions',
-        DEEPSEEK_MODEL: 'deepseek-chat',
-      };
-    }
-  </script>
-  <script src="config.js" onerror="console.info('config.js 未找到，使用默认配置')"></script>
+  <!-- 脚本加载：config.js → ai.js → script.js -->
+  <script src="config.js"></script>
   <script src="ai.js"></script>
   <script src="script.js"></script>
   <script>
