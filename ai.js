@@ -61,23 +61,67 @@ async function generatePageSummary(pageText) {
 }
 
 /**
- * 生成图片语义描述（演示版本 - 使用模拟描述）
- * @param {HTMLImageElement} imgElement - 图片元素
- * @returns {Promise<string>} - 图片描述
+ * 生成图片语义描述 — 基于上下文推断（deepseek-chat）
+ * @param {HTMLImageElement} imgElement
+ * @returns {Promise<string>}
  */
 async function generateImageDescription(imgElement) {
-  // 演示版本：返回基于图片属性的简单描述
-  // 后续可接入 DeepSeek 的图像理解能力或其他视觉模型
-
-  const src = imgElement.src;
-  const alt = imgElement.alt;
-
-  // 如果已有 alt，直接返回
-  if (alt && alt.trim().length > 0) {
-    return `已有描述: ${alt}`;
+  // 已有有意义的 alt，直接返回
+  const existingAlt = imgElement.alt ? imgElement.alt.trim() : '';
+  if (existingAlt.length > 2) {
+    return `已有描述：${existingAlt}`;
   }
 
-  // 模拟描述（演示用）
-  const filename = src.split('/').pop().split('?')[0];
-  return `图片文件: ${filename}（演示模式 - 暂未接入图像识别）`;
+  if (typeof CONFIG === 'undefined' || !CONFIG.DEEPSEEK_API_KEY || CONFIG.DEEPSEEK_API_KEY === 'your-api-key-here') {
+    const filename = imgElement.src.split('/').pop().split('?')[0];
+    return `图片：${filename}（未配置 API Key）`;
+  }
+
+  // 收集上下文信息
+  const src = imgElement.src;
+  const title = imgElement.title || '';
+  const width = imgElement.naturalWidth || imgElement.width || 0;
+  const height = imgElement.naturalHeight || imgElement.height || 0;
+
+  // 提取图片周边文本（父元素 + 兄弟元素）
+  const parent = imgElement.parentElement;
+  const surroundingText = parent
+    ? parent.innerText.replace(/\s+/g, ' ').trim().substring(0, 200)
+    : '';
+
+  const prompt = `你是一个网页无障碍助手，请根据以下信息为图片生成一句简洁的中文 alt 描述（20字以内，不要加引号）：
+- 图片 URL：${src}
+- 尺寸：${width}×${height}px
+- title 属性：${title || '无'}
+- 周边文本：${surroundingText || '无'}
+
+只输出描述文字本身，不要解释。`;
+
+  try {
+    const response = await fetch(CONFIG.DEEPSEEK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${CONFIG.DEEPSEEK_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: CONFIG.DEEPSEEK_MODEL,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        max_tokens: 60
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || response.status);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content.trim();
+  } catch (error) {
+    console.error('图片描述生成失败:', error);
+    const filename = src.split('/').pop().split('?')[0];
+    return `图片：${filename}`;
+  }
 }
