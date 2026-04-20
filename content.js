@@ -142,9 +142,64 @@
     setStatus(`已完成 ${total} 张图片语义增强`, 'success');
   }
 
-  // ===== 简化展示 =====
+  // ===== 简化展示 — 两层架构 =====
   const hiddenEls = [];
   let simplified = false;
+
+  // Layer A：平台专用适配
+  const PLATFORM_RULES = {
+    'sina.com': {
+      name: '新浪新闻',
+      selectors: [
+        '#header', '#nav', '#footer', '#side', '#right',
+        '.top-nav', '.nav-wrap', '.side-bar', '.right-bar', '.right-side',
+        '.footer-wrap', '.bottom-bar',
+        '[class*="recommend"]', '[class*="hot-news"]', '[class*="side-"]',
+        '[class*="ad-"]', '[id*="ad-"]', '[class*="float"]',
+        '[class*="related"]', '[class*="more-news"]',
+      ]
+    },
+    'xiaohongshu.com': {
+      name: '小红书',
+      selectors: [
+        '[class*="side-bar"]', '[class*="sidebar"]',
+        '[class*="header"]', '[class*="nav-bar"]',
+        '[class*="search-bar"]', '[class*="login"]',
+        '[class*="guide"]', '[class*="float"]',
+        '[class*="download"]', '[class*="app-"]',
+        '[class*="footer"]', '[class*="bottom"]',
+      ]
+    },
+    'baidu.com': {
+      name: '百度',
+      selectors: [
+        '#s_top_wrap', '#head', '#bottom_layer', '#foot',
+        '#content_right', '#rs_top_new', '#rs_new',
+        '[class*="right-wrap"]', '[class*="aside"]',
+        '[class*="recommend"]', '[class*="hot"]',
+        '[id*="con-ar"]', '[class*="ad"]',
+      ]
+    },
+  };
+
+  // Layer B：通用兜底逻辑
+  const FALLBACK_SELECTORS = [
+    'nav', 'header', 'footer', 'aside',
+    '[class*="sidebar"]', '[class*="banner"]',
+    '[class*="ad"]', '[class*="popup"]',
+    '[class*="modal"]', '[class*="overlay"]',
+    '[id*="sidebar"]', '[id*="header"]', '[id*="footer"]', '[id*="nav"]',
+  ];
+
+  function getSelectors() {
+    const host = location.hostname;
+    for (const [domain, rule] of Object.entries(PLATFORM_RULES)) {
+      if (host.includes(domain)) {
+        return { selectors: rule.selectors, platformName: rule.name };
+      }
+    }
+    return { selectors: FALLBACK_SELECTORS, platformName: null };
+  }
 
   function handleSimplify() {
     if (simplified) {
@@ -156,24 +211,24 @@
       setResult('<p class=\'placeholder\'>已退出简化模式。</p>');
       return;
     }
-    const selectors = [
-      'nav', 'header', 'footer', 'aside',
-      '[class*="sidebar"]', '[class*="banner"]', '[class*="ad"]', '[class*="popup"]',
-      '[class*="modal"]', '[class*="overlay"]',
-      '[id*="sidebar"]', '[id*="banner"]', '[id*="header"]', '[id*="footer"]', '[id*="nav"]',
-    ];
+
+    const { selectors, platformName } = getSelectors();
     selectors.forEach(sel => {
-      document.querySelectorAll(sel).forEach(el => {
-        if (!el.closest('#awe-panel') && el.style.display !== 'none') {
-          el.style.display = 'none';
-          hiddenEls.push(el);
-        }
-      });
+      try {
+        document.querySelectorAll(sel).forEach(el => {
+          if (!el.closest('#awe-panel') && el.style.display !== 'none') {
+            el.style.display = 'none';
+            hiddenEls.push(el);
+          }
+        });
+      } catch (e) { /* 忽略无效选择器 */ }
     });
+
     simplified = true;
     document.querySelector('#awe-btn-simplify .btn-label').textContent = '恢复展示';
-    setStatus(`已隐藏 ${hiddenEls.length} 个干扰元素`, 'success');
-    setResult(`<h3>✂️ 简化展示</h3><p>已隐藏 ${hiddenEls.length} 个导航/侧栏/页脚等干扰区域。</p><p>点击「恢复默认页面」可撤销。</p>`);
+    const label = platformName ? `（${platformName}专项适配）` : '（通用模式）';
+    setStatus(`已隐藏 ${hiddenEls.length} 个干扰元素 ${label}`, 'success');
+    setResult(`<h3>✂️ 简化展示</h3><p>已隐藏 ${hiddenEls.length} 个干扰区域${label}。</p><p>点击「恢复默认页面」可撤销。</p>`);
   }
 
   // ===== 恢复默认 =====
