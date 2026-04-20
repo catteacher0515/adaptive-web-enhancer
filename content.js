@@ -162,8 +162,8 @@
     'toutiao.com': {
       name: '今日头条',
       selectors: [
-        // 顶部区域
-        '.toutiao-header', '.search-container',
+        // 顶部区域（保留搜索栏）
+        '.toutiao-header',
         '[class*="header-notification"]', '[class*="header-publisher"]',
         // 顶部大图 banner 和导航标签栏
         '[class*="banner"]', '[class*="feed-m-nav"]', '[class*="nav-tab"]',

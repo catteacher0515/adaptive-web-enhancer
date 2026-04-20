@@ -6,56 +6,66 @@
 /* ===== 控制面板容器 ===== */
 #awe-panel {
   position: fixed;
-  top: 24px;
+  bottom: 24px;
   right: 24px;
-  width: 300px;
+  top: auto;
+  width: auto;
   max-height: 92vh;
   overflow-y: auto;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  background: transparent;
+  border-radius: 50px;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif;
   font-size: 14px;
   color: #1f2937;
   z-index: 999999;
-  border: 1px solid rgba(255,255,255,0.6);
-  /* 默认收起时只显示 header，宽度收窄 */
-  width: auto;
-  min-width: 160px;
 }
 
-/* 展开时恢复完整宽度 */
+/* 展开时变成完整面板 */
 #awe-panel.expanded {
   width: 300px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 /* ===== 面板头部 ===== */
 #awe-panel-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
-  border-radius: 16px;
+  justify-content: center;
+  padding: 12px 16px;
+  background: #1a73e8;
+  border-radius: 50px;
   color: #fff;
   cursor: pointer;
-  gap: 10px;
+  gap: 6px;
   white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(26,115,232,0.35);
+  transition: border-radius 0.2s;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#awe-panel-header:hover {
+  background: #1557b0;
 }
 
 /* 展开时 header 底部圆角变直 */
 #awe-panel.expanded #awe-panel-header {
   border-radius: 16px 16px 0 0;
-  cursor: default;
+  justify-content: space-between;
+  padding: 14px 18px;
+  box-shadow: none;
 }
 
 .panel-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 15px;
+  gap: 6px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
 }
 
 .panel-icon {
