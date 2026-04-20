@@ -159,34 +159,7 @@
   panel.id = 'awe-panel';
   panel.setAttribute('role', 'complementary');
   panel.setAttribute('aria-label', '无障碍增强控制面板');
-  panel.innerHTML = `
-    <div id="awe-panel-header">
-      <div class="panel-title"><span>♿</span><span>无障碍增强</span></div>
-      <button id="awe-panel-toggle" aria-label="收起面板">−</button>
-    </div>
-    <div id="awe-panel-body">
-      <div class="awe-btn-group">
-        <button class="awe-btn awe-btn-primary" id="awe-btn-summary">
-          <span class="btn-icon">📄</span><span class="btn-label">生成页面摘要</span>
-        </button>
-        <button class="awe-btn awe-btn-primary" id="awe-btn-image">
-          <span class="btn-icon">🖼️</span><span class="btn-label">图片语义增强</span>
-        </button>
-        <button class="awe-btn awe-btn-secondary" id="awe-btn-simplify">
-          <span class="btn-icon">✂️</span><span class="btn-label">简化展示</span>
-        </button>
-        <button class="awe-btn awe-btn-restore" id="awe-btn-restore">
-          <span class="btn-icon">↩️</span><span class="btn-label">恢复默认页面</span>
-        </button>
-      </div>
-      <div id="awe-status" class="status-message status-info" role="status" aria-live="polite">
-        就绪 — 选择一项功能开始体验
-      </div>
-      <div id="awe-result-content" aria-live="polite">
-        <p class="placeholder">功能结果将显示在这里...</p>
-      </div>
-    </div>
-  `;
+  panel.innerHTML = '<div id=\'awe-panel-header\'><div class=\'panel-title\'><span>♿</span><span>无障碍增强</span></div><button id=\'awe-panel-toggle\' aria-label=\'收起面板\'>−</button></div><div id=\'awe-panel-body\'><div class=\'awe-btn-group\'><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-summary\'><span class=\'btn-icon\'>📄</span><span class=\'btn-label\'>生成页面摘要</span></button><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-image\'><span class=\'btn-icon\'>🖼️</span><span class=\'btn-label\'>图片语义增强</span></button><button class=\'awe-btn awe-btn-secondary\' id=\'awe-btn-simplify\'><span class=\'btn-icon\'>✂️</span><span class=\'btn-label\'>简化展示</span></button><button class=\'awe-btn awe-btn-restore\' id=\'awe-btn-restore\'><span class=\'btn-icon\'>↩️</span><span class=\'btn-label\'>恢复默认页面</span></button></div><div id=\'awe-status\' class=\'status-message status-info\' role=\'status\' aria-live=\'polite\'>就绪 — 选择一项功能开始体验</div><div id=\'awe-result-content\' aria-live=\'polite\'><p class=\'placeholder\'>功能结果将显示在这里...</p></div></div>';
   document.body.appendChild(panel);
 
   // ===== 工具函数 =====
