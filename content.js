@@ -157,28 +157,11 @@
       return;
     }
     const selectors = [
-      // 通用语义标签
       'nav', 'header', 'footer', 'aside',
-      // 通用类名关键词
       '[class*="sidebar"]', '[class*="banner"]', '[class*="ad"]', '[class*="popup"]',
-      '[class*="modal"]', '[class*="overlay"]', '[class*="float"]', '[class*="fixed"]',
-      '[class*="recommend"]', '[class*="related"]', '[class*="feed"]',
-      '[id*="sidebar"]', '[id*="banner"]', '[id*="header"]', '[id*="footer"]',
-      '[id*="nav"]', '[id*="recommend"]',
-      // 小红书特定
-      '[class*="side"]', '[class*="search"]', '[class*="login"]', '[class*="guide"]',
-      // 固定定位元素（通常是浮层/导航）
+      '[class*="modal"]', '[class*="overlay"]',
+      '[id*="sidebar"]', '[id*="banner"]', '[id*="header"]', '[id*="footer"]', '[id*="nav"]',
     ];
-
-    // 额外：隐藏所有 fixed/sticky 定位的元素（浮层、顶部导航等）
-    document.querySelectorAll('*').forEach(el => {
-      if (el.closest('#awe-panel')) return;
-      const style = window.getComputedStyle(el);
-      if ((style.position === 'fixed' || style.position === 'sticky') && el.style.display !== 'none') {
-        el.style.display = 'none';
-        hiddenEls.push(el);
-      }
-    });
     selectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
         if (!el.closest('#awe-panel') && el.style.display !== 'none') {
