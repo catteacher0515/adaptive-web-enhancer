@@ -162,13 +162,17 @@
     'toutiao.com': {
       name: '今日头条',
       selectors: [
-        '[class*="header"]', '[class*="nav"]', '[class*="sidebar"]',
-        '[class*="side-bar"]', '[class*="right-bar"]', '[class*="right-col"]',
-        '[class*="footer"]', '[class*="bottom"]',
-        '[class*="recommend"]', '[class*="related"]', '[class*="hot"]',
+        // 顶部区域
+        '.toutiao-header', '.search-container',
+        '[class*="header-notification"]', '[class*="header-publisher"]',
+        // 右侧整个侧边栏
+        '.right-container',
+        // 热榜和下载横幅
+        '.home-hotboard', '.ttp-hot-board', '.download-app-banner',
+        // 通用干扰元素
         '[class*="ad"]', '[class*="float"]', '[class*="fixed"]',
-        '[class*="download"]', '[class*="app-"]', '[class*="login"]',
-        '[class*="feed-recommend"]', '[class*="aside"]',
+        '[class*="recommend"]', '[class*="related"]',
+        '[class*="footer"]', '[class*="bottom"]',
       ]
     },
     'xiaohongshu.com': {
