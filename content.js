@@ -18,7 +18,7 @@
   panel.id = 'awe-panel';
   panel.setAttribute('role', 'complementary');
   panel.setAttribute('aria-label', '无障碍增强控制面板');
-  panel.innerHTML = '<div id=\'awe-panel-header\'><div class=\'panel-title\'><span>♿</span><span>无障碍增强</span></div><button id=\'awe-panel-toggle\' aria-label=\'收起面板\'>−</button></div><div id=\'awe-panel-body\'><div class=\'awe-btn-group\'><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-summary\'><span class=\'btn-icon\'>📄</span><span class=\'btn-label\'>生成页面摘要</span></button><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-image\'><span class=\'btn-icon\'>🖼️</span><span class=\'btn-label\'>图片语义增强</span></button><button class=\'awe-btn awe-btn-secondary\' id=\'awe-btn-simplify\'><span class=\'btn-icon\'>✂️</span><span class=\'btn-label\'>简化展示</span></button><button class=\'awe-btn awe-btn-restore\' id=\'awe-btn-restore\'><span class=\'btn-icon\'>↩️</span><span class=\'btn-label\'>恢复默认页面</span></button></div><div id=\'awe-status\' class=\'status-message status-info\' role=\'status\' aria-live=\'polite\'>就绪 — 选择一项功能开始体验</div><div id=\'awe-result-content\' aria-live=\'polite\'><p class=\'placeholder\'>功能结果将显示在这里...</p></div></div>';
+  panel.innerHTML = '<div id=\'awe-panel-header\'><div class=\'panel-title\'><span>♿</span><span>无障碍增强</span></div><button id=\'awe-panel-toggle\' aria-label=\'展开面板\'>+</button></div><div id=\'awe-panel-body\' style=\'display:none\'><div class=\'awe-btn-group\'><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-summary\'><span class=\'btn-icon\'>📄</span><span class=\'btn-label\'>生成页面摘要</span></button><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-image\'><span class=\'btn-icon\'>🖼️</span><span class=\'btn-label\'>图片语义增强</span></button><button class=\'awe-btn awe-btn-secondary\' id=\'awe-btn-simplify\'><span class=\'btn-icon\'>✂️</span><span class=\'btn-label\'>简化展示</span></button><button class=\'awe-btn awe-btn-restore\' id=\'awe-btn-restore\'><span class=\'btn-icon\'>↩️</span><span class=\'btn-label\'>恢复默认页面</span></button></div><div id=\'awe-status\' class=\'status-message status-info\' role=\'status\' aria-live=\'polite\'>就绪 — 选择一项功能开始体验</div><div id=\'awe-result-content\' aria-live=\'polite\'><p class=\'placeholder\'>功能结果将显示在这里...</p></div></div>';
   document.body.appendChild(panel);
 
   // ===== 工具函数 =====
@@ -165,12 +165,16 @@
         // 顶部区域
         '.toutiao-header', '.search-container',
         '[class*="header-notification"]', '[class*="header-publisher"]',
+        // 顶部大图 banner 和导航标签栏
+        '[class*="banner"]', '[class*="feed-m-nav"]', '[class*="nav-tab"]',
         // 右侧整个侧边栏
         '.right-container',
         // 热榜和下载横幅
         '.home-hotboard', '.ttp-hot-board', '.download-app-banner',
+        // 创作中心入口（非核心用户功能）
+        '[class*="creator"]', '[class*="publish"]',
         // 通用干扰元素
-        '[class*="ad"]', '[class*="float"]', '[class*="fixed"]',
+        '[class*="ad"]', '[class*="float"]',
         '[class*="recommend"]', '[class*="related"]',
         '[class*="footer"]', '[class*="bottom"]',
       ]
@@ -267,9 +271,23 @@
 
   document.getElementById('awe-panel-toggle').addEventListener('click', function () {
     const body = document.getElementById('awe-panel-body');
+    const panel = document.getElementById('awe-panel');
     const collapsed = body.style.display === 'none';
     body.style.display = collapsed ? '' : 'none';
     this.textContent = collapsed ? '−' : '+';
+    this.setAttribute('aria-label', collapsed ? '收起面板' : '展开面板');
+    panel.classList.toggle('expanded', collapsed);
+  });
+
+  // 点击 header 也可以展开（收起状态下更易点击）
+  document.getElementById('awe-panel-header').addEventListener('click', function (e) {
+    if (e.target === document.getElementById('awe-panel-toggle')) return;
+    const body = document.getElementById('awe-panel-body');
+    if (body.style.display === 'none') {
+      body.style.display = '';
+      document.getElementById('awe-panel-toggle').textContent = '−';
+      document.getElementById('awe-panel').classList.add('expanded');
+    }
   });
 
 })();

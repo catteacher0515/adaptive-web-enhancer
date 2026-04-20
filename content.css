@@ -13,12 +13,20 @@
   overflow-y: auto;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif;
   font-size: 14px;
   color: #1f2937;
   z-index: 999999;
   border: 1px solid rgba(255,255,255,0.6);
+  /* 默认收起时只显示 header，宽度收窄 */
+  width: auto;
+  min-width: 160px;
+}
+
+/* 展开时恢复完整宽度 */
+#awe-panel.expanded {
+  width: 300px;
 }
 
 /* ===== 面板头部 ===== */
@@ -26,10 +34,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 18px;
+  padding: 10px 14px;
   background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
-  border-radius: 16px 16px 0 0;
+  border-radius: 16px;
   color: #fff;
+  cursor: pointer;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+/* 展开时 header 底部圆角变直 */
+#awe-panel.expanded #awe-panel-header {
+  border-radius: 16px 16px 0 0;
+  cursor: default;
 }
 
 .panel-title {
