@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>无障碍增强</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 16px;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+      font-size: 14px;
+      color: #1f2937;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a73e8;
+    }
+    p {
+      margin: 0 0 12px;
+      line-height: 1.6;
+      color: #6b7280;
+      font-size: 13px;
+    }
+    button {
+      width: 100%;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    #status {
+      font-size: 12px;
+      color: #15803d;
+      text-align: center;
+      min-height: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>♿ 无障碍增强</h1>
+  <p>点击下方按钮在当前页面激活无障碍增强面板</p>
+  <button id="activate-btn">激活增强面板</button>
+  <div id="status"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
