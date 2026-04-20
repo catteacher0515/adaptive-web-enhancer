@@ -3,9 +3,7 @@
 // 状态管理
 const state = {
   simplifiedMode: false,
-  focusMode: false,
   hiddenElements: [],
-  originalStyles: new Map(),
 };
 
 // ===== 工具函数 =====
@@ -87,13 +85,10 @@ async function handleImageEnhance() {
 
 function handleSimplify() {
   if (state.simplifiedMode) {
-    // 恢复
-    state.hiddenElements.forEach(el => {
-      el.style.display = '';
-    });
+    state.hiddenElements.forEach(el => { el.style.display = ''; });
     state.hiddenElements = [];
     state.simplifiedMode = false;
-    document.getElementById('btn-simplify').textContent = '简化展示';
+    document.querySelector('#btn-simplify .btn-label').textContent = '简化展示';
     setStatus('已恢复原始页面', 'info');
     setResult('<p class="placeholder">已退出简化模式。</p>');
     return;
@@ -117,44 +112,19 @@ function handleSimplify() {
   });
 
   state.simplifiedMode = true;
-  document.getElementById('btn-simplify').textContent = '恢复原始';
+  document.querySelector('#btn-simplify .btn-label').textContent = '恢复展示';
   setStatus(`已隐藏 ${state.hiddenElements.length} 个干扰元素`, 'success');
-  setResult(`<div class="simplify-result"><h3>简化展示</h3><p>已隐藏 ${state.hiddenElements.length} 个导航/侧栏/页脚等干扰区域。</p><p>点击「恢复原始」可撤销。</p></div>`);
+  setResult(`<div class="simplify-result"><h3>✂️ 简化展示</h3><p>已隐藏 ${state.hiddenElements.length} 个导航/侧栏/页脚等干扰区域。</p><p>点击「恢复默认页面」可撤销。</p></div>`);
 }
 
-// ===== 专注模式 =====
-
-function handleFocusMode() {
-  if (state.focusMode) {
-    document.body.classList.remove('awe-focus-mode');
-    state.focusMode = false;
-    document.getElementById('btn-focus').textContent = '专注模式';
-    setStatus('已退出专注模式', 'info');
-    return;
-  }
-
-  document.body.classList.add('awe-focus-mode');
-  state.focusMode = true;
-  document.getElementById('btn-focus').textContent = '退出专注';
-  setStatus('专注模式已开启', 'success');
-  setResult('<div class="focus-result"><h3>专注模式</h3><p>页面已进入专注模式，降低视觉干扰，提升阅读体验。</p></div>');
-}
-
-// ===== 恢复全部 =====
+// ===== 恢复默认页面 =====
 
 function handleRestoreAll() {
-  // 恢复简化模式
   if (state.simplifiedMode) {
     state.hiddenElements.forEach(el => { el.style.display = ''; });
     state.hiddenElements = [];
     state.simplifiedMode = false;
-    document.getElementById('btn-simplify').textContent = '简化展示';
-  }
-  // 恢复专注模式
-  if (state.focusMode) {
-    document.body.classList.remove('awe-focus-mode');
-    state.focusMode = false;
-    document.getElementById('btn-focus').textContent = '专注模式';
+    document.querySelector('#btn-simplify .btn-label').textContent = '简化展示';
   }
   setStatus('已恢复页面原始状态', 'success');
   setResult('<p class="placeholder">所有增强效果已撤销。</p>');
@@ -166,6 +136,5 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-summary').addEventListener('click', handleSummary);
   document.getElementById('btn-image').addEventListener('click', handleImageEnhance);
   document.getElementById('btn-simplify').addEventListener('click', handleSimplify);
-  document.getElementById('btn-focus').addEventListener('click', handleFocusMode);
   document.getElementById('btn-restore').addEventListener('click', handleRestoreAll);
 });

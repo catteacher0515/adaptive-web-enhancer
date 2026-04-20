@@ -3,167 +3,225 @@
   box-sizing: border-box;
 }
 
-/* ===== 控制面板 ===== */
+/* ===== 控制面板容器 ===== */
 #awe-panel {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 320px;
-  max-height: 90vh;
+  top: 24px;
+  right: 24px;
+  width: 300px;
+  max-height: 92vh;
   overflow-y: auto;
   background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif;
   font-size: 14px;
-  color: #333;
+  color: #1f2937;
   z-index: 999999;
+  border: 1px solid rgba(255,255,255,0.6);
 }
 
+/* ===== 面板头部 ===== */
 #awe-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
-  background: #1a73e8;
-  border-radius: 12px 12px 0 0;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+  border-radius: 16px 16px 0 0;
   color: #fff;
 }
 
-#awe-panel-header h2 {
-  margin: 0;
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.panel-icon {
+  font-size: 18px;
+  line-height: 1;
 }
 
 #awe-panel-toggle {
-  background: none;
+  background: rgba(255,255,255,0.18);
   border: none;
   color: #fff;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
-  padding: 0 4px;
-  opacity: 0.85;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
 }
 
 #awe-panel-toggle:hover {
-  opacity: 1;
+  background: rgba(255,255,255,0.32);
 }
 
+/* ===== 面板主体 ===== */
 #awe-panel-body {
-  padding: 14px 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* ===== 按钮组 ===== */
+/* ===== 按钮组：2×2 + 1 全宽 ===== */
 .awe-btn-group {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-bottom: 12px;
 }
 
 .awe-btn {
-  padding: 9px 10px;
-  border: 1px solid #d0d0d0;
-  border-radius: 8px;
-  background: #f8f9fa;
-  color: #333;
-  font-size: 13px;
-  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border-radius: 12px;
+  border: 1.5px solid transparent;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.15s;
+  line-height: 1.3;
   text-align: center;
 }
 
-.awe-btn:hover {
-  background: #e8f0fe;
-  border-color: #1a73e8;
-  color: #1a73e8;
-}
-
 .awe-btn:active {
-  background: #d2e3fc;
+  transform: scale(0.96);
 }
 
+.btn-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.btn-label {
+  font-size: 12px;
+}
+
+/* 主要按钮 — 蓝色系 */
+.awe-btn-primary {
+  background: #e8f0fe;
+  border-color: #c5d8fd;
+  color: #1a56db;
+}
+
+.awe-btn-primary:hover {
+  background: #d2e3fc;
+  border-color: #1a73e8;
+  box-shadow: 0 2px 8px rgba(26,115,232,0.18);
+}
+
+/* 次要按钮 — 灰色系 */
+.awe-btn-secondary {
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+  color: #374151;
+}
+
+.awe-btn-secondary:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* 恢复按钮 — 全宽橙色系 */
 .awe-btn-restore {
   grid-column: 1 / -1;
-  background: #fff3e0;
-  border-color: #ffb74d;
-  color: #e65100;
+  flex-direction: row;
+  padding: 11px 16px;
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #c2410c;
+  font-size: 13px;
 }
 
 .awe-btn-restore:hover {
-  background: #ffe0b2;
-  border-color: #e65100;
-  color: #e65100;
+  background: #ffedd5;
+  border-color: #fb923c;
+  box-shadow: 0 2px 8px rgba(194,65,12,0.14);
 }
 
-/* ===== 状态消息 ===== */
+.awe-btn-restore .btn-icon {
+  font-size: 16px;
+}
+
+/* ===== 状态提示区 ===== */
 .status-message {
-  padding: 7px 10px;
-  border-radius: 6px;
+  padding: 9px 12px;
+  border-radius: 8px;
   font-size: 12px;
-  margin-bottom: 10px;
-  min-height: 28px;
+  font-weight: 500;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.status-info    { background: #e8f0fe; color: #1a73e8; }
-.status-loading { background: #fff8e1; color: #f57c00; }
-.status-success { background: #e6f4ea; color: #1e8e3e; }
-.status-error   { background: #fce8e6; color: #c5221f; }
+.status-info    { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.status-loading { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.status-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.status-error   { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
-/* ===== 结果区域 ===== */
+/* ===== 结果展示区 ===== */
 #result-content {
-  background: #f8f9fa;
-  border: 1px solid #e8eaed;
-  border-radius: 8px;
-  padding: 12px;
-  min-height: 60px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  min-height: 72px;
   font-size: 13px;
-  line-height: 1.6;
-  color: #444;
+  line-height: 1.65;
+  color: #374151;
 }
 
 #result-content .placeholder {
-  color: #999;
+  color: #9ca3af;
   font-style: italic;
   margin: 0;
+  text-align: center;
+  padding: 8px 0;
 }
 
 #result-content h3 {
   margin: 0 0 8px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: #1a73e8;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-#result-content p {
-  margin: 0 0 6px;
-}
+#result-content p  { margin: 0 0 6px; }
+#result-content p:last-child { margin-bottom: 0; }
 
 #result-content ul {
   margin: 6px 0 0;
-  padding-left: 18px;
+  padding-left: 16px;
 }
 
-#result-content li {
-  margin-bottom: 4px;
-}
-
-.summary-box, .image-results, .simplify-result, .focus-result {
-  /* 继承 result-content 样式即可 */
-}
+#result-content li { margin-bottom: 5px; }
 
 .note {
-  color: #888;
-  font-size: 12px;
+  color: #9ca3af;
+  font-size: 11px;
   margin-top: 6px;
 }
 
-/* ===== 专注模式 ===== */
+/* ===== 简化模式 / 专注模式 ===== */
 body.awe-focus-mode nav,
 body.awe-focus-mode header,
 body.awe-focus-mode footer,
@@ -171,7 +229,7 @@ body.awe-focus-mode aside,
 body.awe-focus-mode [class*="sidebar"],
 body.awe-focus-mode [class*="banner"],
 body.awe-focus-mode [class*="popup"] {
-  opacity: 0.15;
+  opacity: 0.12;
   pointer-events: none;
   transition: opacity 0.3s;
 }
@@ -181,71 +239,73 @@ body.awe-focus-mode #awe-panel {
   pointer-events: auto !important;
 }
 
-/* ===== 演示页样式（index.html 独立使用时） ===== */
+/* ===== 演示页基础样式 ===== */
 body.demo-page {
   margin: 0;
   padding: 0;
-  background: #f0f4f8;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f1f5f9;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif;
+}
+
+.demo-nav {
+  background: linear-gradient(90deg, #1a73e8, #0d47a1);
+  padding: 15px 28px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(26,115,232,0.25);
 }
 
 .demo-content {
-  max-width: 800px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 40px 24px 120px;
+  padding: 36px 24px 120px;
 }
 
 .demo-content h1 {
-  font-size: 28px;
-  color: #1a1a2e;
-  margin-bottom: 8px;
+  font-size: 26px;
+  color: #111827;
+  margin: 0 0 8px;
+  font-weight: 800;
 }
 
 .demo-content .subtitle {
-  color: #666;
-  margin-bottom: 32px;
+  color: #6b7280;
+  margin: 0 0 28px;
   font-size: 15px;
+  line-height: 1.6;
 }
 
 .demo-section {
   background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
+  border-radius: 14px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 1px solid #e5e7eb;
 }
 
 .demo-section h2 {
-  font-size: 18px;
-  color: #333;
+  font-size: 17px;
+  color: #111827;
   margin: 0 0 12px;
+  font-weight: 700;
 }
 
 .demo-section p {
-  color: #555;
-  line-height: 1.7;
+  color: #4b5563;
+  line-height: 1.75;
   margin: 0 0 10px;
+  font-size: 14px;
 }
 
-.demo-section img {
-  max-width: 100%;
-  border-radius: 8px;
-  margin-top: 10px;
-}
-
-.demo-nav {
-  background: #1a73e8;
-  padding: 14px 24px;
-  color: #fff;
-  font-weight: 600;
-  font-size: 16px;
-}
+.demo-section p:last-child { margin-bottom: 0; }
 
 .demo-footer {
-  background: #333;
-  color: #aaa;
+  background: #1f2937;
+  color: #9ca3af;
   text-align: center;
   padding: 20px;
   font-size: 13px;
-  margin-top: 40px;
 }
