@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adaptive Web Enhancer - 网页无障碍增强演示</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="demo-page">
+
+  <!-- 演示用导航 -->
+  <div class="demo-nav">网页无障碍增强演示站</div>
+
+  <!-- 演示内容 -->
+  <div class="demo-content">
+    <h1>欢迎使用 Adaptive Web Enhancer</h1>
+    <p class="subtitle">右侧控制面板可体验页面摘要、图片语义增强、简化展示、专注模式等功能。</p>
+
+    <div class="demo-section">
+      <h2>什么是网页无障碍增强？</h2>
+      <p>无障碍增强是指在不修改原网页源代码的前提下，通过前端注入技术为用户提供更友好的阅读体验。本项目面向视障用户、老年用户和临时障碍用户，帮助他们更好地理解和使用网页内容。</p>
+      <p>核心能力包括：AI 驱动的页面摘要生成、图片语义描述、信息简化展示、专注阅读模式。</p>
+    </div>
+
+    <div class="demo-section">
+      <h2>核心功能介绍</h2>
+      <p><strong>页面摘要：</strong>调用 DeepSeek AI，自动提取页面核心内容，帮助用户快速了解"这是什么页面、能做什么"。</p>
+      <p><strong>图片语义：</strong>为缺少 alt 描述的图片自动生成语义标注，提升读屏软件的可用性。</p>
+      <p><strong>简化展示：</strong>隐藏导航、侧栏、页脚等干扰区域，聚焦核心内容。</p>
+      <p><strong>专注模式：</strong>降低非核心区域的视觉权重，减少认知负担。</p>
+    </div>
+
+    <div class="demo-section">
+      <h2>示例图片（用于测试图片语义增强）</h2>
+      <p>下方图片没有 alt 属性，点击「图片语义」按钮可为其生成描述：</p>
+      <img src="https://picsum.photos/seed/demo1/600/300" width="600" height="300" style="display:block;margin-top:12px;" />
+      <img src="https://picsum.photos/seed/demo2/600/200" width="600" height="200" style="display:block;margin-top:12px;" />
+    </div>
+
+    <aside style="background:#fff7e6;border-left:4px solid #ffb74d;padding:16px 20px;border-radius:8px;margin-bottom:20px;">
+      <strong>侧边栏示例</strong>
+      <p style="margin:6px 0 0;color:#666;font-size:13px;">这是一个侧边栏区域，点击「简化展示」后会被隐藏。</p>
+    </aside>
+
+    <nav style="background:#e8f0fe;padding:12px 16px;border-radius:8px;margin-bottom:20px;">
+      <strong>导航示例：</strong>
+      <a href="#" style="margin:0 8px;color:#1a73e8;">首页</a>
+      <a href="#" style="margin:0 8px;color:#1a73e8;">关于</a>
+      <a href="#" style="margin:0 8px;color:#1a73e8;">联系我们</a>
+    </nav>
+  </div>
+
+  <!-- 演示页脚 -->
+  <div class="demo-footer">© 2025 Adaptive Web Enhancer Demo</div>
+
+  <!-- 无障碍增强控制面板 -->
+  <div id="awe-panel" role="complementary" aria-label="无障碍增强控制面板">
+    <div id="awe-panel-header">
+      <h2>♿ 无障碍增强</h2>
+      <button id="awe-panel-toggle" aria-label="收起面板" title="收起/展开">−</button>
+    </div>
+    <div id="awe-panel-body">
+      <div class="awe-btn-group">
+        <button class="awe-btn" id="btn-summary">页面摘要</button>
+        <button class="awe-btn" id="btn-image">图片语义</button>
+        <button class="awe-btn" id="btn-simplify">简化展示</button>
+        <button class="awe-btn" id="btn-focus">专注模式</button>
+        <button class="awe-btn awe-btn-restore" id="btn-restore">恢复原始</button>
+      </div>
+      <div id="status-message" class="status-message status-info" role="status" aria-live="polite">
+        就绪 — 选择一项功能开始体验
+      </div>
+      <div id="result-content" aria-live="polite">
+        <p class="placeholder">功能结果将显示在这里...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 配置文件（优先加载 config.js，不存在则用示例配置） -->
+  <script>
+    // 内联默认配置，避免 config.js 不存在时报错
+    if (typeof CONFIG === 'undefined') {
+      var CONFIG = {
+        DEEPSEEK_API_KEY: 'your-api-key-here',
+        DEEPSEEK_API_URL: 'https://api.deepseek.com/v1/chat/completions',
+        DEEPSEEK_MODEL: 'deepseek-chat',
+      };
+    }
+  </script>
+  <script src="config.js" onerror="console.info('config.js 未找到，使用默认配置（无 API Key）')"></script>
+  <script src="ai.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // 面板收起/展开
+    document.getElementById('awe-panel-toggle').addEventListener('click', function () {
+      const body = document.getElementById('awe-panel-body');
+      const collapsed = body.style.display === 'none';
+      body.style.display = collapsed ? '' : 'none';
+      this.textContent = collapsed ? '−' : '+';
+      this.setAttribute('aria-label', collapsed ? '收起面板' : '展开面板');
+    });
+  </script>
+</body>
+</html>
