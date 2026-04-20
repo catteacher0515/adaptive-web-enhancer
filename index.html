@@ -53,6 +53,18 @@
   <!-- 演示页脚 -->
   <footer class="demo-footer">© 2025 Adaptive Web Enhancer Demo</footer>
 
+  <!-- ===== Bookmarklet 安装区 ===== -->
+  <div id="awe-install" style="position:fixed;bottom:24px;left:24px;z-index:999998;">
+    <div style="background:#fff;border-radius:14px;box-shadow:0 4px 20px rgba(0,0,0,0.12);border:1px solid #e5e7eb;padding:16px 18px;max-width:260px;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;">
+      <div style="font-size:13px;font-weight:700;color:#1f2937;margin-bottom:6px;">📌 安装到任意网站</div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:12px;line-height:1.5;">将下方按钮拖到书签栏，然后在任意网页点击即可激活无障碍增强面板。</div>
+      <a id="awe-bookmarklet-link" href="#" style="display:block;padding:10px 14px;background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-align:center;text-decoration:none;cursor:grab;">
+        ♿ 无障碍增强 — 拖我到书签栏
+      </a>
+      <div style="font-size:11px;color:#9ca3af;margin-top:8px;text-align:center;">拖拽到书签栏 · 点击即用</div>
+    </div>
+  </div>
+
   <!-- ===== 无障碍增强控制面板 ===== -->
   <div id="awe-panel" role="complementary" aria-label="无障碍增强控制面板">
 
@@ -105,6 +117,17 @@
   <script src="config.js"></script>
   <script src="ai.js"></script>
   <script src="script.js"></script>
+  <script>
+    // 加载 bookmarklet 代码并注入到链接
+    fetch('bookmarklet.min.js')
+      .then(r => r.text())
+      .then(code => {
+        document.getElementById('awe-bookmarklet-link').href = code;
+      })
+      .catch(() => {
+        document.getElementById('awe-bookmarklet-link').textContent = '加载失败';
+      });
+  </script>
   <script>
     // 面板收起/展开
     document.getElementById('awe-panel-toggle').addEventListener('click', function () {
