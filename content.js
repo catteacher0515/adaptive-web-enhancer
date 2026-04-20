@@ -159,6 +159,18 @@
         '[class*="related"]', '[class*="more-news"]',
       ]
     },
+    'toutiao.com': {
+      name: '今日头条',
+      selectors: [
+        '[class*="header"]', '[class*="nav"]', '[class*="sidebar"]',
+        '[class*="side-bar"]', '[class*="right-bar"]', '[class*="right-col"]',
+        '[class*="footer"]', '[class*="bottom"]',
+        '[class*="recommend"]', '[class*="related"]', '[class*="hot"]',
+        '[class*="ad"]', '[class*="float"]', '[class*="fixed"]',
+        '[class*="download"]', '[class*="app-"]', '[class*="login"]',
+        '[class*="feed-recommend"]', '[class*="aside"]',
+      ]
+    },
     'xiaohongshu.com': {
       name: '小红书',
       selectors: [
