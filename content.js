@@ -98,7 +98,7 @@
       setResult('<p class=\'placeholder\'>没有找到需要增强的图片。</p>');
       return;
     }
-    const total = Math.min(images.length, 5);
+    const total = Math.min(images.length, 10);
     setStatus(`找到 ${images.length} 张图片，正在处理前 ${total} 张...`, 'loading');
     const results = [];
     for (let i = 0; i < total; i++) {
@@ -110,24 +110,36 @@
       } else {
         setStatus(`正在处理第 ${i + 1}/${total} 张图片...`, 'loading');
         try {
-          const parent = img.parentElement;
-          const surroundingText = parent
-            ? parent.innerText.replace(/\s+/g, ' ').trim().substring(0, 200)
-            : '';
+          // 向上最多找 4 层父元素，提取最有意义的文本（标题、描述等）
+          let contextText = '';
+          let el = img.parentElement;
+          for (let depth = 0; depth < 4 && el; depth++) {
+            const text = el.innerText ? el.innerText.replace(/\s+/g, ' ').trim() : '';
+            if (text.length > contextText.length && text.length < 300) {
+              contextText = text;
+            }
+            el = el.parentElement;
+          }
+          // 同级的 aria-label / title / figcaption 也纳入
+          const ariaLabel = img.closest('figure')?.querySelector('figcaption')?.innerText || '';
+          const titleAttr = img.title || '';
+          const extraContext = [ariaLabel, titleAttr].filter(Boolean).join(' / ');
+
           desc = await callDeepSeek([{
             role: 'user',
-            content: `你是网页无障碍助手，请根据以下信息为图片生成一句简洁的中文 alt 描述（20字以内，不要加引号）：\n- 图片 URL：${img.src}\n- 尺寸：${img.naturalWidth || img.width}×${img.naturalHeight || img.height}px\n- 周边文本：${surroundingText || '无'}\n\n只输出描述文字本身。`
-          }], 60);
+            content: `你是网页无障碍助手。请根据以下信息为图片生成一句简洁的中文 alt 描述（15字以内，不要加引号）。\n周边文字（最重要的参考）：${contextText || '无'}\n额外信息：${extraContext || '无'}\n\n注意：周边文字通常就是图片的标题或说明，直接用它来描述图片内容。只输出描述文字本身。`
+          }], 40);
         } catch (e) {
-          desc = img.src.split('/').pop().split('?')[0];
+          desc = '图片';
         }
         img.setAttribute('alt', desc);
         img.setAttribute('title', desc);
       }
       results.push(`<li><strong>图片 ${i + 1}：</strong>${desc}</li>`);
     }
-    setResult(`<h3>🖼️ 图片语义增强结果</h3><ul>${results.join('')}</ul>${images.length > 5 ? `<p class=\'note\'>仅展示前 5 张，共 ${images.length} 张</p>` : ''}`);
-    setStatus('图片语义增强完成', 'success');
+    const noteText = images.length > total ? `<p class=\'note\'>已处理前 ${total} 张，共 ${images.length} 张</p>` : '';
+    setResult(`<h3>🖼️ 图片语义增强结果</h3><ul>${results.join('')}</ul>${noteText}`);
+    setStatus(`已完成 ${total} 张图片语义增强`, 'success');
   }
 
   // ===== 简化展示 =====
@@ -144,9 +156,29 @@
       setResult('<p class=\'placeholder\'>已退出简化模式。</p>');
       return;
     }
-    const selectors = ['nav', 'header', 'footer', 'aside',
+    const selectors = [
+      // 通用语义标签
+      'nav', 'header', 'footer', 'aside',
+      // 通用类名关键词
       '[class*="sidebar"]', '[class*="banner"]', '[class*="ad"]', '[class*="popup"]',
-      '[id*="sidebar"]', '[id*="banner"]'];
+      '[class*="modal"]', '[class*="overlay"]', '[class*="float"]', '[class*="fixed"]',
+      '[class*="recommend"]', '[class*="related"]', '[class*="feed"]',
+      '[id*="sidebar"]', '[id*="banner"]', '[id*="header"]', '[id*="footer"]',
+      '[id*="nav"]', '[id*="recommend"]',
+      // 小红书特定
+      '[class*="side"]', '[class*="search"]', '[class*="login"]', '[class*="guide"]',
+      // 固定定位元素（通常是浮层/导航）
+    ];
+
+    // 额外：隐藏所有 fixed/sticky 定位的元素（浮层、顶部导航等）
+    document.querySelectorAll('*').forEach(el => {
+      if (el.closest('#awe-panel')) return;
+      const style = window.getComputedStyle(el);
+      if ((style.position === 'fixed' || style.position === 'sticky') && el.style.display !== 'none') {
+        el.style.display = 'none';
+        hiddenEls.push(el);
+      }
+    });
     selectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
         if (!el.closest('#awe-panel') && el.style.display !== 'none') {
