@@ -222,10 +222,32 @@
     return { selectors: FALLBACK_SELECTORS, platformName: null };
   }
 
+  let centeredEl = null;
+  let centeredOrigStyle = '';
+
+  function applyCentering() {
+    const el = document.querySelector('.left-container');
+    if (el) {
+      centeredEl = el;
+      centeredOrigStyle = el.style.cssText;
+      el.style.margin = '0 auto';
+      el.style.float = 'none';
+    }
+  }
+
+  function removeCentering() {
+    if (centeredEl) {
+      centeredEl.style.cssText = centeredOrigStyle;
+      centeredEl = null;
+      centeredOrigStyle = '';
+    }
+  }
+
   function handleSimplify() {
     if (simplified) {
       hiddenEls.forEach(el => { el.style.display = ''; });
       hiddenEls.length = 0;
+      removeCentering();
       simplified = false;
       document.querySelector('#awe-btn-simplify .btn-label').textContent = '简化展示';
       setStatus('已恢复原始页面', 'info');
@@ -244,6 +266,10 @@
         });
       } catch (e) { /* 忽略无效选择器 */ }
     });
+
+    if (location.hostname.includes('toutiao.com')) {
+      applyCentering();
+    }
 
     simplified = true;
     document.querySelector('#awe-btn-simplify .btn-label').textContent = '恢复展示';
