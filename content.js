@@ -161,24 +161,40 @@
     },
     'toutiao.com': {
       name: '今日头条',
-      selectors: [
-        // 顶部 header 内的干扰元素（保留搜索框 .search-container，不隐藏整个 header）
-        '[class*="header-notification"]', '[class*="header-publisher"]',
-        '[class*="header-login"]', '[class*="header-user"]',
-        // 导航标签栏（今日、视频、娱乐等 tab）
-        '.main-nav-wrapper', '[class*="feed-m-nav"]', '[class*="nav-tab"]',
-        // 今日要闻区块
-        '.feed-five-wrapper',
-        // 右侧整个侧边栏
-        '.right-container',
-        // 热榜和下载横幅
-        '.home-hotboard', '.ttp-hot-board', '.download-app-banner',
-        // 创作中心入口
-        '[class*="creator"]', '[class*="publish"]',
-        // 通用干扰元素
-        '[class*="ad"]', '[class*="float"]',
-        '[class*="footer"]', '[class*="bottom"]',
-      ]
+      getSelectors: () => {
+        // 判断是否为文章详情页
+        const isArticlePage = /\/article\/|\/i\d+/.test(location.pathname);
+
+        if (isArticlePage) {
+          // 详情页：只保留搜索框 + 正文
+          return [
+            // header 内干扰元素（精确隐藏，保留 .ttp-search-wrapper）
+            '.channel-wrapper',
+            '.header-notice-wrapper',
+            '.header-publisher-wrapper',
+            '.header-profile-wrapper',
+            // 底部工具栏
+            '.ttp-toolbar',
+            // 右侧推荐栏
+            '.right-container',
+            // 通用广告
+            '[id*="ad"]', '[class*="-ad-"]',
+          ];
+        } else {
+          // 首页：保留 hero 区和推荐流
+          return [
+            '[class*="header-notification"]', '[class*="header-publisher"]',
+            '[class*="header-login"]', '[class*="header-user"]',
+            '.main-nav-wrapper', '[class*="feed-m-nav"]', '[class*="nav-tab"]',
+            '.feed-five-wrapper',
+            '.right-container',
+            '.home-hotboard', '.ttp-hot-board', '.download-app-banner',
+            '[class*="creator"]', '[class*="publish"]',
+            '[class*="ad"]', '[class*="float"]',
+            '[class*="footer"]', '[class*="bottom"]',
+          ];
+        }
+      }
     },
     'xiaohongshu.com': {
       name: '小红书',
@@ -216,7 +232,8 @@
     const host = location.hostname;
     for (const [domain, rule] of Object.entries(PLATFORM_RULES)) {
       if (host.includes(domain)) {
-        return { selectors: rule.selectors, platformName: rule.name };
+        const selectors = rule.getSelectors ? rule.getSelectors() : rule.selectors;
+        return { selectors, platformName: rule.name };
       }
     }
     return { selectors: FALLBACK_SELECTORS, platformName: null };
