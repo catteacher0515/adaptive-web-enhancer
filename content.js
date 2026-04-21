@@ -93,8 +93,16 @@
 
   function isInViewport(img) {
     const rect = img.getBoundingClientRect();
-    return rect.top < window.innerHeight && rect.bottom > 0
-        && rect.left < window.innerWidth && rect.right > 0;
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+
+    // 图片必须在视口内，且至少50%可见
+    const verticalVisible = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+    const horizontalVisible = Math.min(rect.right, windowWidth) - Math.max(rect.left, 0);
+    const visibleArea = Math.max(0, verticalVisible) * Math.max(0, horizontalVisible);
+    const totalArea = rect.width * rect.height;
+
+    return visibleArea > 0 && (visibleArea / totalArea) > 0.5;
   }
 
   function addImageLabel(img, index) {
