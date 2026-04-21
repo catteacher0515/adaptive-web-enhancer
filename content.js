@@ -89,28 +89,96 @@
   }
 
   // ===== 图片语义增强 =====
+  const processedImages = []; // 存储已处理的图片，用于点击高亮
+
+  function isInViewport(img) {
+    const rect = img.getBoundingClientRect();
+    return rect.top < window.innerHeight && rect.bottom > 0
+        && rect.left < window.innerWidth && rect.right > 0;
+  }
+
+  function addImageLabel(img, index) {
+    // 给图片添加序号标签
+    if (img.style.position !== 'absolute' && img.style.position !== 'fixed') {
+      img.style.position = 'relative';
+    }
+    const label = document.createElement('div');
+    label.className = 'awe-img-label';
+    label.textContent = index;
+    label.style.cssText = `
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: #1a73e8;
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 999998;
+      pointer-events: none;
+    `;
+    img.parentElement.style.position = 'relative';
+    img.parentElement.appendChild(label);
+  }
+
+  function highlightImage(img) {
+    // 滚动到图片并高亮
+    img.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const originalBorder = img.style.border;
+    img.style.border = '3px solid #1a73e8';
+    img.style.boxShadow = '0 0 12px rgba(26,115,232,0.6)';
+    setTimeout(() => {
+      img.style.border = originalBorder;
+      img.style.boxShadow = '';
+    }, 2000);
+  }
+
   async function handleImageEnhance() {
-    const images = Array.from(document.querySelectorAll('img')).filter(img =>
-      !img.closest('#awe-panel') && (img.naturalWidth || img.width) > 50
-    );
+    // 清空之前的处理记录
+    processedImages.length = 0;
+    document.querySelectorAll('.awe-img-label').forEach(el => el.remove());
+
+    // 获取文章标题作为全局上下文
+    const articleTitle = document.querySelector('h1')?.innerText?.trim() || '';
+
+    // 过滤图片：视口内 + 尺寸合适 + 非装饰
+    const images = Array.from(document.querySelectorAll('img')).filter(img => {
+      if (img.closest('#awe-panel')) return false;
+      if (!isInViewport(img)) return false;
+      const width = img.naturalWidth || img.width;
+      const height = img.naturalHeight || img.height;
+      if (width < 80 || height < 80) return false;
+      const src = img.src.toLowerCase();
+      if (src.includes('avatar') || src.includes('icon') || src.includes('logo')) return false;
+      return true;
+    });
+
     if (images.length === 0) {
-      setStatus('当前页面未找到有效图片', 'info');
-      setResult('<p class=\'placeholder\'>没有找到需要增强的图片。</p>');
+      setStatus('当前视口内未找到需要增强的图片', 'info');
+      setResult('<p class=\'placeholder\'>请滚动到有图片的位置后再试。</p>');
       return;
     }
-    const total = Math.min(images.length, 10);
-    setStatus(`找到 ${images.length} 张图片，正在处理前 ${total} 张...`, 'loading');
+
+    setStatus(`找到 ${images.length} 张图片，正在处理...`, 'loading');
     const results = [];
-    for (let i = 0; i < total; i++) {
+
+    for (let i = 0; i < images.length; i++) {
       const img = images[i];
+      const index = i + 1;
       const existingAlt = img.alt ? img.alt.trim() : '';
       let desc;
-      if (existingAlt.length > 2) {
-        desc = `已有描述：${existingAlt}`;
+
+      if (existingAlt.length > 5) {
+        desc = existingAlt;
       } else {
-        setStatus(`正在处理第 ${i + 1}/${total} 张图片...`, 'loading');
+        setStatus(`正在处理第 ${index}/${images.length} 张图片...`, 'loading');
         try {
-          // 向上最多找 4 层父元素，提取最有意义的文本（标题、描述等）
+          // 提取周边文字上下文
           let contextText = '';
           let el = img.parentElement;
           for (let depth = 0; depth < 4 && el; depth++) {
@@ -120,26 +188,64 @@
             }
             el = el.parentElement;
           }
-          // 同级的 aria-label / title / figcaption 也纳入
           const ariaLabel = img.closest('figure')?.querySelector('figcaption')?.innerText || '';
           const titleAttr = img.title || '';
           const extraContext = [ariaLabel, titleAttr].filter(Boolean).join(' / ');
 
-          desc = await callDeepSeek([{
-            role: 'user',
-            content: `你是网页无障碍助手。请根据以下信息为图片生成一句简洁的中文 alt 描述（15字以内，不要加引号）。\n周边文字（最重要的参考）：${contextText || '无'}\n额外信息：${extraContext || '无'}\n\n注意：周边文字通常就是图片的标题或说明，直接用它来描述图片内容。只输出描述文字本身。`
-          }], 40);
+          // 调用 AI，传入文章标题 + 周边文字
+          const prompt = `你是网页无障碍助手。请根据以下信息为图片生成一句简洁的中文描述（20字以内）。
+
+文章标题：${articleTitle || '无'}
+图片周边文字：${contextText || '无'}
+额外信息：${extraContext || '无'}
+
+要求：
+1. 结合文章标题理解图片在文章中的作用
+2. 周边文字通常是图片的说明，直接用它描述图片内容
+3. 只输出描述文字，不要加引号或前缀`;
+
+          desc = await callDeepSeek([{ role: 'user', content: prompt }], 50);
+
+          // 过滤无效描述
+          if (/装饰|无法确定|图片\d|内容不明/.test(desc)) {
+            continue; // 跳过这张图片，不显示结果
+          }
+
         } catch (e) {
-          desc = '图片';
+          desc = '图片内容';
         }
+
         img.setAttribute('alt', desc);
         img.setAttribute('title', desc);
       }
-      results.push(`<li><strong>图片 ${i + 1}：</strong>${desc}</li>`);
+
+      // 添加序号标签
+      addImageLabel(img, index);
+      processedImages.push({ img, desc, index });
+
+      // 结果面板显示可点击的链接
+      results.push(`<li><a href="#" class="awe-img-link" data-index="${index - 1}">图片${index}</a>：${desc}</li>`);
     }
-    const noteText = images.length > total ? `<p class=\'note\'>已处理前 ${total} 张，共 ${images.length} 张</p>` : '';
-    setResult(`<h3>🖼️ 图片语义增强结果</h3><ul>${results.join('')}</ul>${noteText}`);
-    setStatus(`已完成 ${total} 张图片语义增强`, 'success');
+
+    if (results.length === 0) {
+      setStatus('未找到有效图片描述', 'info');
+      setResult('<p class=\'placeholder\'>当前图片无需增强或描述质量不足。</p>');
+      return;
+    }
+
+    setResult(`<h3>🖼️ 图片语义增强结果</h3><ul>${results.join('')}</ul><p class='note'>点击图片序号可高亮定位</p>`);
+    setStatus(`已完成 ${results.length} 张图片语义增强`, 'success');
+
+    // 绑定点击事件
+    document.querySelectorAll('.awe-img-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const idx = parseInt(link.dataset.index);
+        if (processedImages[idx]) {
+          highlightImage(processedImages[idx].img);
+        }
+      });
+    });
   }
 
   // ===== 简化展示 — 两层架构 =====

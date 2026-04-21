@@ -237,6 +237,25 @@
 .status-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
 .status-error   { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
+/* ===== 图片序号标签 ===== */
+.awe-img-label {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: #1a73e8;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 999998;
+  pointer-events: none;
+}
+
 /* ===== 结果展示区 ===== */
 #result-content {
   background: #f9fafb;
@@ -276,6 +295,17 @@
 }
 
 #result-content li { margin-bottom: 5px; }
+
+.awe-img-link {
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.awe-img-link:hover {
+  text-decoration: underline;
+}
 
 .note {
   color: #9ca3af;
