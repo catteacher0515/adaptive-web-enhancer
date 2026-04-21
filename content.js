@@ -259,12 +259,13 @@
   }
 
   function applySearchCentering() {
-    const el = document.querySelector('.ttp-search-wrapper');
-    if (el) {
-      centeredSearchEl = el;
-      centeredSearchOrigStyle = el.style.cssText;
-      el.style.margin = '0 auto';
-      el.style.display = 'block';
+    const searchWrapper = document.querySelector('.ttp-search-wrapper');
+    const header = document.querySelector('.ttp-site-header');
+    if (searchWrapper && header) {
+      centeredSearchEl = header;
+      centeredSearchOrigStyle = header.style.cssText;
+      header.style.justifyContent = 'center';
+      header.style.display = 'flex';
     }
   }
 
