@@ -168,15 +168,17 @@
         if (isArticlePage) {
           // 详情页：只保留搜索框 + 正文
           return [
-            // header 内干扰元素（精确隐藏，保留 .ttp-search-wrapper）
+            // header 内干扰元素（保留 .ttp-search-wrapper）
             '.channel-wrapper',
             '.header-notice-wrapper',
             '.header-publisher-wrapper',
             '.header-profile-wrapper',
-            // 底部工具栏
-            '.ttp-toolbar',
+            // 作者信息区（含TA的热门作品、查看更多）
+            '.media-info',
             // 右侧推荐栏
             '.right-container',
+            // 热榜和下载横幅
+            '.ttp-hot-board', '.download-app-banner',
             // 通用广告
             '[id*="ad"]', '[class*="-ad-"]',
           ];
