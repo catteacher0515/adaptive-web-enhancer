@@ -6,57 +6,92 @@
 /* ===== 控制面板容器 ===== */
 #awe-panel {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 80px;
+  right: 16px;
   top: auto;
   width: auto;
-  max-height: 92vh;
-  overflow-y: auto;
   background: transparent;
-  border-radius: 50px;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif;
   font-size: 14px;
   color: #1f2937;
   z-index: 999999;
 }
 
-/* 展开时变成完整面板 */
+/* 展开时变成完整面板，从右下角向上展开 */
 #awe-panel.expanded {
   width: 300px;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0,0,0,0.06);
+  bottom: 80px;
 }
 
-/* ===== 面板头部 ===== */
+/* ===== 面板头部 — 收起时是小圆形图标 ===== */
 #awe-panel-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 16px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   background: #1a73e8;
-  border-radius: 50px;
+  border-radius: 50%;
   color: #fff;
   cursor: pointer;
-  gap: 6px;
-  white-space: nowrap;
-  box-shadow: 0 2px 12px rgba(26,115,232,0.35);
-  transition: border-radius 0.2s;
-  font-size: 13px;
-  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(26,115,232,0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-left: auto;
 }
 
 #awe-panel-header:hover {
-  background: #1557b0;
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(26,115,232,0.5);
 }
 
-/* 展开时 header 底部圆角变直 */
+/* 展开时 header 变成完整标题栏 */
 #awe-panel.expanded #awe-panel-header {
+  width: auto;
+  height: auto;
   border-radius: 16px 16px 0 0;
   justify-content: space-between;
   padding: 14px 18px;
   box-shadow: none;
+  transform: none;
+  margin-left: 0;
+}
+
+/* 收起时隐藏文字，只显示图标 */
+#awe-panel:not(.expanded) .panel-title span:last-child,
+#awe-panel:not(.expanded) #awe-panel-toggle {
+  display: none;
+}
+
+#awe-panel:not(.expanded) .panel-title span:first-child {
+  font-size: 20px;
+}
+
+/* 隐藏按钮 — 悬停在面板上时显示 */
+#awe-panel-hide {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+  background: #6b7280;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 10px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+#awe-panel:not(.expanded):hover #awe-panel-hide {
+  display: flex;
 }
 
 .panel-title {

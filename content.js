@@ -18,7 +18,7 @@
   panel.id = 'awe-panel';
   panel.setAttribute('role', 'complementary');
   panel.setAttribute('aria-label', '无障碍增强控制面板');
-  panel.innerHTML = '<div id=\'awe-panel-header\'><div class=\'panel-title\'><span>♿</span><span>无障碍增强</span></div><button id=\'awe-panel-toggle\' aria-label=\'展开面板\'>+</button></div><div id=\'awe-panel-body\' style=\'display:none\'><div class=\'awe-btn-group\'><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-summary\'><span class=\'btn-icon\'>📄</span><span class=\'btn-label\'>生成页面摘要</span></button><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-image\'><span class=\'btn-icon\'>🖼️</span><span class=\'btn-label\'>图片语义增强</span></button><button class=\'awe-btn awe-btn-secondary\' id=\'awe-btn-simplify\'><span class=\'btn-icon\'>✂️</span><span class=\'btn-label\'>简化展示</span></button><button class=\'awe-btn awe-btn-restore\' id=\'awe-btn-restore\'><span class=\'btn-icon\'>↩️</span><span class=\'btn-label\'>恢复默认页面</span></button></div><div id=\'awe-status\' class=\'status-message status-info\' role=\'status\' aria-live=\'polite\'>就绪 — 选择一项功能开始体验</div><div id=\'awe-result-content\' aria-live=\'polite\'><p class=\'placeholder\'>功能结果将显示在这里...</p></div></div>';
+  panel.innerHTML = '<div id=\'awe-panel-header\'><div class=\'panel-title\'><span>♿</span><span>无障碍增强</span></div><button id=\'awe-panel-toggle\' aria-label=\'展开面板\'>+</button></div><button id=\'awe-panel-hide\' title=\'隐藏\'>×</button><div id=\'awe-panel-body\' style=\'display:none\'><div class=\'awe-btn-group\'><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-summary\'><span class=\'btn-icon\'>📄</span><span class=\'btn-label\'>生成页面摘要</span></button><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-image\'><span class=\'btn-icon\'>🖼️</span><span class=\'btn-label\'>图片语义增强</span></button><button class=\'awe-btn awe-btn-secondary\' id=\'awe-btn-simplify\'><span class=\'btn-icon\'>✂️</span><span class=\'btn-label\'>简化展示</span></button><button class=\'awe-btn awe-btn-restore\' id=\'awe-btn-restore\'><span class=\'btn-icon\'>↩️</span><span class=\'btn-label\'>恢复默认页面</span></button></div><div id=\'awe-status\' class=\'status-message status-info\' role=\'status\' aria-live=\'polite\'>就绪 — 选择一项功能开始体验</div><div id=\'awe-result-content\' aria-live=\'polite\'><p class=\'placeholder\'>功能结果将显示在这里...</p></div></div>';
   document.body.appendChild(panel);
 
   // ===== 工具函数 =====
@@ -162,20 +162,21 @@
     'toutiao.com': {
       name: '今日头条',
       selectors: [
-        // 顶部区域（保留搜索栏）
-        '.toutiao-header',
+        // 顶部 header 内的干扰元素（保留搜索框 .search-container，不隐藏整个 header）
         '[class*="header-notification"]', '[class*="header-publisher"]',
-        // 顶部大图 banner 和导航标签栏
-        '[class*="banner"]', '[class*="feed-m-nav"]', '[class*="nav-tab"]',
+        '[class*="header-login"]', '[class*="header-user"]',
+        // 导航标签栏（今日、视频、娱乐等 tab）
+        '.main-nav-wrapper', '[class*="feed-m-nav"]', '[class*="nav-tab"]',
+        // 今日要闻区块
+        '.feed-five-wrapper',
         // 右侧整个侧边栏
         '.right-container',
         // 热榜和下载横幅
         '.home-hotboard', '.ttp-hot-board', '.download-app-banner',
-        // 创作中心入口（非核心用户功能）
+        // 创作中心入口
         '[class*="creator"]', '[class*="publish"]',
         // 通用干扰元素
         '[class*="ad"]', '[class*="float"]',
-        '[class*="recommend"]', '[class*="related"]',
         '[class*="footer"]', '[class*="bottom"]',
       ]
     },
