@@ -179,6 +179,8 @@
             '.right-container',
             // 热榜和下载横幅
             '.ttp-hot-board', '.download-app-banner',
+            // 精彩视频
+            '[aria-label="精彩视频"]', '.hot-video',
             // 通用广告
             '[id*="ad"]', '[class*="-ad-"]',
           ];
@@ -243,6 +245,8 @@
 
   let centeredEl = null;
   let centeredOrigStyle = '';
+  let centeredSearchEl = null;
+  let centeredSearchOrigStyle = '';
 
   function applyCentering() {
     const el = document.querySelector('.left-container');
@@ -254,11 +258,26 @@
     }
   }
 
+  function applySearchCentering() {
+    const el = document.querySelector('.ttp-search-wrapper');
+    if (el) {
+      centeredSearchEl = el;
+      centeredSearchOrigStyle = el.style.cssText;
+      el.style.margin = '0 auto';
+      el.style.display = 'block';
+    }
+  }
+
   function removeCentering() {
     if (centeredEl) {
       centeredEl.style.cssText = centeredOrigStyle;
       centeredEl = null;
       centeredOrigStyle = '';
+    }
+    if (centeredSearchEl) {
+      centeredSearchEl.style.cssText = centeredSearchOrigStyle;
+      centeredSearchEl = null;
+      centeredSearchOrigStyle = '';
     }
   }
 
@@ -287,7 +306,12 @@
     });
 
     if (location.hostname.includes('toutiao.com')) {
-      applyCentering();
+      const isArticlePage = /\/article\/|\/i\d+/.test(location.pathname);
+      if (isArticlePage) {
+        applySearchCentering();
+      } else {
+        applyCentering();
+      }
     }
 
     simplified = true;
