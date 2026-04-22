@@ -110,6 +110,9 @@
       { key: 'g73qpkqhq805pt4fnuinr6gg8hh3v8', desc: '美国顶流直播网红 Speed 穿红色球衣运动装，街边建筑背景' },
       { key: 'g73qpkqhq8g5pt4fnuinr6gfh8jmv8', desc: '美国顶流直播网红 Speed 与古装男子合影，夜晚城市灯光背景' },
       { key: 'g73qpkqhq905pt4fnuinr6gosu254o', desc: '美国顶流直播网红 Speed 与多人摆夸张造型，公园围观人群' },
+      { key: 'g73qpkqhq9g5pt4fnuinr6g0sphse0', desc: '美国顶流直播网红 Speed 穿青色中式长衫，搭黑裤被围拍' },
+      { key: 'g73qpkqhqa05pt4fnuinr6gb1pe3sg', desc: '美国顶流直播网红 Speed 在夜景高楼前腾空完成后空翻，背景为灯光璀璨的城市天际线' },
+      { key: 'g73qpkqhqag5pt4fnuinr6gqoke8i0', desc: '中国网红歌手田一铭与美国顶流直播网红 Speed 一起拿着矿泉水互动，水柱从瓶口喷出，两人表情夸张兴奋，背景是城市高楼与户外平台' },
     ],
   };
 
