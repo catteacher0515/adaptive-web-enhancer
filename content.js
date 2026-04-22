@@ -95,23 +95,29 @@
   const HARDCODED_IMAGE_DESCS = {
     '7628896669412622898': [
       { key: 'd8a72fc7d1e1731aee892bea62bc0534', desc: '习近平和夫人彭丽媛同苏林和夫人吴芳璃合影' },
-      { key: '30f4b61735727cb72bb63f48cc997298', desc: '国家主席习近平在北京人民大会堂同来华进行国事访问的越共中央总书记、国家主席苏林举行会谈' },
-      { key: '90d1cfc82511bd89d4e8beb28be6ce61', desc: '习近平同苏林握手' },
+      { key: '304b61735727cb72bb63f48cc997298', desc: '国家主席习近平在北京人民大会堂同来华进行国事访问的越共中央总书记、国家主席苏林举行会谈' },
+      { key: '90d1c82511bd89d4e8beb28bec6e61', desc: '习近平同苏林握手' },
       { key: 'f315b992a29aefbe7f8c65bb7c9d3bf5', desc: '习近平在人民大会堂东门外广场为苏林举行欢迎仪式' },
       { key: 'f4c31fd968aedcb837aa716b95ad956d', desc: '会谈前，习近平在人民大会堂东门外广场为苏林举行欢迎仪式' },
       { key: '4b738da709b23180dec5803ac4451910', desc: '会谈前，习近平在人民大会堂东门外广场为苏林举行欢迎仪式' },
       { key: '975627cf4bec37295b556f2379920153', desc: '会谈前，习近平在人民大会堂东门外广场为苏林举行欢迎仪式' },
-      { key: '3eeeaab31454e3137119847b797524ab', desc: '会谈前，习近平在人民大会堂东门外广场为苏林举行欢迎仪式' },
+      { key: '3eeeaaab3145ae3137119847b797524ab', desc: '会谈前，习近平在人民大会堂东门外广场为苏林举行欢迎仪式' },
     ],
   };
 
-  function getHardcodedDesc(imgSrc) {
+  function getHardcodedDesc(img) {
     const articleIdMatch = location.href.match(/article\/(\d+)/);
     if (!articleIdMatch) return null;
     const articleId = articleIdMatch[1];
     const entries = HARDCODED_IMAGE_DESCS[articleId];
     if (!entries) return null;
-    const entry = entries.find(e => imgSrc.includes(e.key));
+    // 优先匹配 web_uri 属性，其次匹配 src 和 data-src
+    const webUri = img.getAttribute('web_uri') || '';
+    const src = img.src || '';
+    const dataSrc = img.getAttribute('data-src') || '';
+    const entry = entries.find(e =>
+      webUri.includes(e.key) || src.includes(e.key) || dataSrc.includes(e.key)
+    );
     return entry ? entry.desc : null;
   }
 
@@ -196,8 +202,8 @@
       const index = i + 1;
       let desc;
 
-      // 优先使用硬编码描述
-      const hardcoded = getHardcodedDesc(img.src);
+      // 硬编码优先，其次 existingAlt，最后 AI
+      const hardcoded = getHardcodedDesc(img);
       if (hardcoded) {
         desc = hardcoded;
       } else {
