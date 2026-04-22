@@ -450,6 +450,7 @@
 
   // ===== 老年模式 =====
   let elderMode = false;
+  let elderCenteredEls = []; // 记录被居中的元素和原始样式
 
   const ELDER_HIDE_SELECTORS = [
     '.detail-side-interaction',
@@ -460,6 +461,28 @@
   ];
   const elderHiddenEls = [];
 
+  function applyElderCentering() {
+    // 直接用 JS 操作 DOM，只居中正文容器，不动外层布局
+    const articleEl = document.querySelector('.tt-article-content');
+    if (!articleEl) return;
+
+    // 只处理正文容器本身和它的直接父容器
+    elderCenteredEls.push({ el: articleEl, origStyle: articleEl.style.cssText });
+    articleEl.style.cssText += '; max-width: 760px !important; margin-left: auto !important; margin-right: auto !important;';
+
+    // 如果父容器有宽度限制，也要处理
+    const parent = articleEl.parentElement;
+    if (parent) {
+      elderCenteredEls.push({ el: parent, origStyle: parent.style.cssText });
+      parent.style.cssText += '; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important;';
+    }
+  }
+
+  function removeElderCentering() {
+    elderCenteredEls.forEach(({ el, origStyle }) => { el.style.cssText = origStyle; });
+    elderCenteredEls = [];
+  }
+
   function handleElder() {
     const styleId = 'awe-elder-style';
     if (elderMode) {
@@ -467,6 +490,7 @@
       if (el) el.remove();
       elderHiddenEls.forEach(el => { el.style.display = ''; });
       elderHiddenEls.length = 0;
+      removeElderCentering();
       elderMode = false;
       document.querySelector('#awe-btn-elder .btn-label').textContent = '老年模式';
       setStatus('已退出老年模式', 'info');
@@ -480,7 +504,8 @@
       .article-content, .article-content p, .content-article p,
       .tt-article-content, .tt-article-content p,
       .article-detail p, .article-detail li,
-      .article-wrapper p, .article-wrapper li {
+      .article-wrapper p, .article-wrapper li,
+      [class*="syl-article-base"] p, [class*="syl-article-base"] li {
         font-size: 20px !important;
         line-height: 2.0 !important;
         color: #111111 !important;
@@ -488,6 +513,7 @@
       }
     `;
     document.head.appendChild(style);
+    applyElderCentering();
 
     ELDER_HIDE_SELECTORS.forEach(sel => {
       try {
@@ -519,6 +545,7 @@
       if (el) el.remove();
       elderHiddenEls.forEach(el => { el.style.display = ''; });
       elderHiddenEls.length = 0;
+      removeElderCentering();
       elderMode = false;
       document.querySelector('#awe-btn-elder .btn-label').textContent = '老年模式';
     }
