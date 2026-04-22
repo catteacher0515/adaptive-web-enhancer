@@ -451,11 +451,22 @@
   // ===== 老年模式 =====
   let elderMode = false;
 
+  const ELDER_HIDE_SELECTORS = [
+    '.detail-side-interaction',
+    '.tool-item.home',
+    '.tool-item.download',
+    '.tool-item.feedback',
+    '[class*="download-app"]',
+  ];
+  const elderHiddenEls = [];
+
   function handleElder() {
     const styleId = 'awe-elder-style';
     if (elderMode) {
       const el = document.getElementById(styleId);
       if (el) el.remove();
+      elderHiddenEls.forEach(el => { el.style.display = ''; });
+      elderHiddenEls.length = 0;
       elderMode = false;
       document.querySelector('#awe-btn-elder .btn-label').textContent = '老年模式';
       setStatus('已退出老年模式', 'info');
@@ -477,10 +488,22 @@
       }
     `;
     document.head.appendChild(style);
+
+    ELDER_HIDE_SELECTORS.forEach(sel => {
+      try {
+        document.querySelectorAll(sel).forEach(el => {
+          if (el.style.display !== 'none') {
+            el.style.display = 'none';
+            elderHiddenEls.push(el);
+          }
+        });
+      } catch (e) {}
+    });
+
     elderMode = true;
     document.querySelector('#awe-btn-elder .btn-label').textContent = '退出老年模式';
     setStatus('老年模式已开启', 'success');
-    setResult('<h3>👴 老年模式</h3><p>字体已放大至 20px，行距 2.0，对比度增强。</p><p>再次点击可退出。</p>');
+    setResult('<h3>👴 老年模式</h3><p>字体已放大至 20px，行距 2.0，对比度增强。</p><p>已隐藏互动栏和下载按钮。</p><p>再次点击可退出。</p>');
   }
 
   // ===== 恢复默认 =====
@@ -494,6 +517,8 @@
     if (elderMode) {
       const el = document.getElementById('awe-elder-style');
       if (el) el.remove();
+      elderHiddenEls.forEach(el => { el.style.display = ''; });
+      elderHiddenEls.length = 0;
       elderMode = false;
       document.querySelector('#awe-btn-elder .btn-label').textContent = '老年模式';
     }
