@@ -179,6 +179,8 @@
     // 硬编码模式：处理全页面所有图片；通用模式：只处理视口内图片
     const images = Array.from(document.querySelectorAll('img')).filter(img => {
       if (img.closest('#awe-panel')) return false;
+      // 过滤评论区图片
+      if (img.closest('[class*="comment"]') || img.closest('[class*="reply"]')) return false;
       if (!isHardcoded && !isInViewport(img)) return false;
       // 懒加载图片用 img_width/img_height 属性判断，避免被过滤
       const width = parseInt(img.getAttribute('img_width')) || img.naturalWidth || img.width;
@@ -205,6 +207,8 @@
 
       // 硬编码优先，其次 existingAlt，最后 AI
       const hardcoded = getHardcodedDesc(img);
+      // 调试：打印 web_uri 帮助确认 key
+      console.log(`[AWE] 图片${index} web_uri:`, img.getAttribute('web_uri'), '| hardcoded:', hardcoded);
       if (hardcoded) {
         desc = hardcoded;
       } else {
