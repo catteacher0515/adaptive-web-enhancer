@@ -103,15 +103,23 @@
       { key: '975627cf4bec37295b556f2379920153', desc: '会谈前，习近平在人民大会堂东门外广场为苏林举行欢迎仪式' },
       { key: '3eeeaaab3145ae3137119847b797524ab', desc: '会谈前，习近平在人民大会堂东门外广场为苏林举行欢迎仪式' },
     ],
+    '67fb50b7000000000f03b110': [
+      { key: 'g73qpro1u1g5pt4fnuinr6gd4pbsr8', desc: '美国顶流直播网红 Speed 在夜市台阶坐打电话，周围人群围观' },
+      { key: 'g73qpkqhq705pt4fnuinr6gpbjm610', desc: '美国顶流直播网红 Speed 扮熊猫脸被抬着，街头围观表演' },
+      { key: 'g73qpkqhq7g5pt4fnuinr6go6q1l78', desc: '美国顶流直播网红 Speed 穿僧衣带学生练武，集体动作整齐' },
+      { key: 'g73qpkqhq805pt4fnuinr6gg8hh3v8', desc: '美国顶流直播网红 Speed 穿红色球衣运动装，街边建筑背景' },
+      { key: 'g73qpkqhq8g5pt4fnuinr6gfh8jmv8', desc: '美国顶流直播网红 Speed 与古装男子合影，夜晚城市灯光背景' },
+      { key: 'g73qpkqhq905pt4fnuinr6gosu254o', desc: '美国顶流直播网红 Speed 与多人摆夸张造型，公园围观人群' },
+    ],
   };
 
   function getHardcodedDesc(img) {
-    const articleIdMatch = location.href.match(/article\/(\d+)/);
+    const articleIdMatch = location.href.match(/article\/(\d+)/) ||
+                           location.href.match(/explore\/([a-f0-9]+)/);
     if (!articleIdMatch) return null;
     const articleId = articleIdMatch[1];
     const entries = HARDCODED_IMAGE_DESCS[articleId];
     if (!entries) return null;
-    // 优先匹配 web_uri 属性，其次匹配 src 和 data-src
     const webUri = img.getAttribute('web_uri') || '';
     const src = img.src || '';
     const dataSrc = img.getAttribute('data-src') || '';
@@ -168,21 +176,126 @@
     }, 2000);
   }
 
-  async function handleImageEnhance() {
+  let xhsObserver = null;
+
+  async function handleXiaohongshuImageEnhance() {
+    // 清理上次的 observer
+    if (xhsObserver) { xhsObserver.disconnect(); xhsObserver = null; }
     processedImages.length = 0;
     document.querySelectorAll('.awe-img-label').forEach(el => el.remove());
 
-    const articleTitle = document.querySelector('h1')?.innerText?.trim() || '';
-    const isHardcoded = !!location.href.match(/article\/(\d+)/) &&
-      !!HARDCODED_IMAGE_DESCS[location.href.match(/article\/(\d+)/)[1]];
+    const sliderImgs = Array.from(document.querySelectorAll('.note-slider img, [class*="swiper"] img, [class*="slider"] img')).filter(img => img.src.includes('xhscdn.com'));
 
-    // 硬编码模式：处理全页面所有图片；通用模式：只处理视口内图片
-    const images = Array.from(document.querySelectorAll('img')).filter(img => {
+    // 去掉轮播末尾的复制节点（小红书无限轮播会在末尾复制前几张）
+    // 用 src 中间的唯一 hash 段去重
+    const seen = new Set();
+    const uniqueSliderImgs = sliderImgs.filter(img => {
+      // 用 URL 中 xhscdn.com 后的路径段作为唯一 key
+      const match = img.src.match(/xhscdn\.com\/\d+\/([a-f0-9]+)/);
+      const hash = match ? match[1] : img.src;
+      if (seen.has(hash)) return false;
+      seen.add(hash);
+      return true;
+    });
+
+    if (uniqueSliderImgs.length === 0) {
+      setStatus('未找到笔记图片', 'info');
+      setResult('<p class=\'placeholder\'>请确认已打开小红书笔记详情页。</p>');
+      return;
+    }
+
+    const processedSet = new Set(); // 用 src hash 去重
+    const results = [];
+
+    async function processImg(img) {
+      const srcParts = img.src.split('/');
+      const srcKey = srcParts[srcParts.length - 1]?.split('!')[0] || img.src;
+      if (!srcKey || processedSet.has(srcKey)) return;
+      processedSet.add(srcKey);
+
+      const index = uniqueSliderImgs.indexOf(img) + 1;
+      const hardcoded = getHardcodedDesc(img);
+      let desc = hardcoded || img.alt?.trim() || '';
+
+      if (!desc) {
+        setStatus(`正在生成第 ${index} 张图片描述...`, 'loading');
+        const articleTitle = document.querySelector('.title')?.innerText?.trim() || '';
+        const noteText = document.querySelector('.note-content')?.innerText?.replace(/\s+/g, ' ').trim().slice(0, 200) || '';
+        const prompt = `你是网页无障碍助手。请根据以下信息为图片生成一句简洁的中文描述（20字以内）。
+笔记标题：${articleTitle || '无'}
+笔记内容：${noteText || '无'}
+这是第 ${index} 张图片。
+要求：只输出描述文字，不要加引号或前缀。`;
+        try {
+          desc = await callDeepSeek([{ role: 'user', content: prompt }], 50);
+        } catch (e) {
+          desc = '图片内容';
+        }
+      }
+
+      img.setAttribute('alt', desc);
+      img.setAttribute('title', desc);
+      addImageLabel(img, index);
+      processedImages.push({ img, desc, index });
+      results.push(`<li><a href="#" class="awe-img-link" data-index="${processedImages.length - 1}">图片${index}</a>：${desc}</li>`);
+
+      setResult(`<h3>🖼️ 图片语义增强</h3><ul>${results.join('')}</ul><p class='note'>滑动图片自动识别下一张</p>`);
+      setStatus(`已识别 ${results.length} 张图片`, 'success');
+
+      document.querySelectorAll('.awe-img-link').forEach(link => {
+        link.onclick = (e) => {
+          e.preventDefault();
+          const idx = parseInt(link.dataset.index);
+          if (processedImages[idx]) highlightImage(processedImages[idx].img);
+        };
+      });
+    }
+
+    // 立即处理当前可见图片
+    const currentVisible = uniqueSliderImgs.find(img => isInViewport(img));
+    if (currentVisible) processImg(currentVisible);
+
+    // IntersectionObserver 监听滑动
+    xhsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+          processImg(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    uniqueSliderImgs.forEach(img => xhsObserver.observe(img));
+    setStatus('已开启图片语义增强，滑动图片自动识别', 'success');
+  }
+
+  async function handleImageEnhance() {
+    // 小红书走专用逻辑
+    if (location.hostname.includes('xiaohongshu.com')) {
+      return handleXiaohongshuImageEnhance();
+    }
+
+    processedImages.length = 0;
+    document.querySelectorAll('.awe-img-label').forEach(el => el.remove());
+
+    const articleTitle = document.querySelector('h1')?.innerText?.trim() ||
+                         document.querySelector('.title')?.innerText?.trim() || '';
+
+    const idMatch = location.href.match(/article\/(\d+)/) ||
+                    location.href.match(/explore\/([a-f0-9]+)/);
+    const isHardcoded = !!(idMatch && HARDCODED_IMAGE_DESCS[idMatch[1]]);
+
+    const isXiaohongshu = location.hostname.includes('xiaohongshu.com');
+
+    // 小红书：只取笔记正文轮播图；其他：全页面图片
+    const imgScope = isXiaohongshu
+      ? document.querySelectorAll('.note-slider img')
+      : document.querySelectorAll('img');
+
+    // 硬编码模式：处理全部匹配图片；通用模式：只处理视口内图片
+    const images = Array.from(imgScope).filter(img => {
       if (img.closest('#awe-panel')) return false;
-      // 过滤评论区图片
       if (img.closest('[class*="comment"]') || img.closest('[class*="reply"]')) return false;
       if (!isHardcoded && !isInViewport(img)) return false;
-      // 懒加载图片用 img_width/img_height 属性判断，避免被过滤
       const width = parseInt(img.getAttribute('img_width')) || img.naturalWidth || img.width;
       const height = parseInt(img.getAttribute('img_height')) || img.naturalHeight || img.height;
       if (width < 80 || height < 80) return false;
