@@ -180,10 +180,11 @@
     const images = Array.from(document.querySelectorAll('img')).filter(img => {
       if (img.closest('#awe-panel')) return false;
       if (!isHardcoded && !isInViewport(img)) return false;
-      const width = img.naturalWidth || img.width;
-      const height = img.naturalHeight || img.height;
+      // 懒加载图片用 img_width/img_height 属性判断，避免被过滤
+      const width = parseInt(img.getAttribute('img_width')) || img.naturalWidth || img.width;
+      const height = parseInt(img.getAttribute('img_height')) || img.naturalHeight || img.height;
       if (width < 80 || height < 80) return false;
-      const src = img.src.toLowerCase();
+      const src = (img.src + (img.getAttribute('data-src') || '')).toLowerCase();
       if (src.includes('avatar') || src.includes('icon') || src.includes('logo')) return false;
       return true;
     });
