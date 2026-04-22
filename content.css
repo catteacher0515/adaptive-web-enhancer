@@ -276,6 +276,8 @@
   border-radius: 10px;
   padding: 12px 14px;
   min-height: 72px;
+  max-height: 50vh;
+  overflow-y: auto;
   font-size: 13px;
   line-height: 1.65;
   color: #374151;
