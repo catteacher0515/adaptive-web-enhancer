@@ -270,7 +270,7 @@
 }
 
 /* ===== 结果展示区 ===== */
-#result-content {
+#awe-result-content {
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
@@ -283,7 +283,7 @@
   color: #374151;
 }
 
-#result-content .placeholder {
+#awe-result-content .placeholder {
   color: #9ca3af;
   font-style: italic;
   margin: 0;
@@ -291,7 +291,7 @@
   padding: 8px 0;
 }
 
-#result-content h3 {
+#awe-result-content h3 {
   margin: 0 0 8px;
   font-size: 13px;
   font-weight: 700;
@@ -301,15 +301,15 @@
   gap: 5px;
 }
 
-#result-content p  { margin: 0 0 6px; }
-#result-content p:last-child { margin-bottom: 0; }
+#awe-result-content p  { margin: 0 0 6px; }
+#awe-result-content p:last-child { margin-bottom: 0; }
 
-#result-content ul {
+#awe-result-content ul {
   margin: 6px 0 0;
   padding-left: 16px;
 }
 
-#result-content li { margin-bottom: 5px; }
+#awe-result-content li { margin-bottom: 5px; }
 
 .awe-img-link {
   color: #1a73e8;
