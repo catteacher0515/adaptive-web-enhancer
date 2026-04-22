@@ -199,6 +199,19 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
+/* 老年模式按钮 — 绿色系 */
+.awe-btn-elder {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.awe-btn-elder:hover {
+  background: #dcfce7;
+  border-color: #4ade80;
+  box-shadow: 0 2px 8px rgba(21,128,61,0.14);
+}
+
 /* 恢复按钮 — 全宽橙色系 */
 .awe-btn-restore {
   grid-column: 1 / -1;

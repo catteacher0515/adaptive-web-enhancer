@@ -18,7 +18,7 @@
   panel.id = 'awe-panel';
   panel.setAttribute('role', 'complementary');
   panel.setAttribute('aria-label', '无障碍增强控制面板');
-  panel.innerHTML = '<div id=\'awe-panel-header\'><div class=\'panel-title\'><span>♿</span><span>无障碍增强</span></div><button id=\'awe-panel-toggle\' aria-label=\'展开面板\'>+</button></div><button id=\'awe-panel-hide\' title=\'隐藏\'>×</button><div id=\'awe-panel-body\' style=\'display:none\'><div class=\'awe-btn-group\'><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-summary\'><span class=\'btn-icon\'>📄</span><span class=\'btn-label\'>生成页面摘要</span></button><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-image\'><span class=\'btn-icon\'>🖼️</span><span class=\'btn-label\'>图片语义增强</span></button><button class=\'awe-btn awe-btn-secondary\' id=\'awe-btn-simplify\'><span class=\'btn-icon\'>✂️</span><span class=\'btn-label\'>简化展示</span></button><button class=\'awe-btn awe-btn-restore\' id=\'awe-btn-restore\'><span class=\'btn-icon\'>↩️</span><span class=\'btn-label\'>恢复默认页面</span></button></div><div id=\'awe-status\' class=\'status-message status-info\' role=\'status\' aria-live=\'polite\'>就绪 — 选择一项功能开始体验</div><div id=\'awe-result-content\' aria-live=\'polite\'><p class=\'placeholder\'>功能结果将显示在这里...</p></div></div>';
+  panel.innerHTML = '<div id=\'awe-panel-header\'><div class=\'panel-title\'><span>♿</span><span>无障碍增强</span></div><button id=\'awe-panel-toggle\' aria-label=\'展开面板\'>+</button></div><button id=\'awe-panel-hide\' title=\'隐藏\'>×</button><div id=\'awe-panel-body\' style=\'display:none\'><div class=\'awe-btn-group\'><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-summary\'><span class=\'btn-icon\'>📄</span><span class=\'btn-label\'>生成页面摘要</span></button><button class=\'awe-btn awe-btn-primary\' id=\'awe-btn-image\'><span class=\'btn-icon\'>🖼️</span><span class=\'btn-label\'>图片语义增强</span></button><button class=\'awe-btn awe-btn-secondary\' id=\'awe-btn-simplify\'><span class=\'btn-icon\'>✂️</span><span class=\'btn-label\'>简化展示</span></button><button class=\'awe-btn awe-btn-elder\' id=\'awe-btn-elder\'><span class=\'btn-icon\'>👴</span><span class=\'btn-label\'>老年模式</span></button><button class=\'awe-btn awe-btn-restore\' id=\'awe-btn-restore\'><span class=\'btn-icon\'>↩️</span><span class=\'btn-label\'>恢复默认页面</span></button></div><div id=\'awe-status\' class=\'status-message status-info\' role=\'status\' aria-live=\'polite\'>就绪 — 选择一项功能开始体验</div><div id=\'awe-result-content\' aria-live=\'polite\'><p class=\'placeholder\'>功能结果将显示在这里...</p></div></div>';
   document.body.appendChild(panel);
 
   // ===== 工具函数 =====
@@ -448,6 +448,41 @@
     setResult(`<h3>✂️ 简化展示</h3><p>已隐藏 ${hiddenEls.length} 个干扰区域${label}。</p><p>点击「恢复默认页面」可撤销。</p>`);
   }
 
+  // ===== 老年模式 =====
+  let elderMode = false;
+
+  function handleElder() {
+    const styleId = 'awe-elder-style';
+    if (elderMode) {
+      const el = document.getElementById(styleId);
+      if (el) el.remove();
+      elderMode = false;
+      document.querySelector('#awe-btn-elder .btn-label').textContent = '老年模式';
+      setStatus('已退出老年模式', 'info');
+      setResult('<p class=\'placeholder\'>已退出老年模式。</p>');
+      return;
+    }
+
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .article-content, .article-content p, .content-article p,
+      .tt-article-content, .tt-article-content p,
+      .article-detail p, .article-detail li,
+      .article-wrapper p, .article-wrapper li {
+        font-size: 20px !important;
+        line-height: 2.0 !important;
+        color: #111111 !important;
+        letter-spacing: 0.02em !important;
+      }
+    `;
+    document.head.appendChild(style);
+    elderMode = true;
+    document.querySelector('#awe-btn-elder .btn-label').textContent = '退出老年模式';
+    setStatus('老年模式已开启', 'success');
+    setResult('<h3>👴 老年模式</h3><p>字体已放大至 20px，行距 2.0，对比度增强。</p><p>再次点击可退出。</p>');
+  }
+
   // ===== 恢复默认 =====
   function handleRestore() {
     if (simplified) {
@@ -456,6 +491,13 @@
       simplified = false;
       document.querySelector('#awe-btn-simplify .btn-label').textContent = '简化展示';
     }
+    if (elderMode) {
+      const el = document.getElementById('awe-elder-style');
+      if (el) el.remove();
+      elderMode = false;
+      document.querySelector('#awe-btn-elder .btn-label').textContent = '老年模式';
+    }
+    removeCentering();
     setStatus('已恢复页面原始状态', 'success');
     setResult('<p class=\'placeholder\'>所有增强效果已撤销。</p>');
   }
@@ -464,6 +506,7 @@
   document.getElementById('awe-btn-summary').addEventListener('click', handleSummary);
   document.getElementById('awe-btn-image').addEventListener('click', handleImageEnhance);
   document.getElementById('awe-btn-simplify').addEventListener('click', handleSimplify);
+  document.getElementById('awe-btn-elder').addEventListener('click', handleElder);
   document.getElementById('awe-btn-restore').addEventListener('click', handleRestore);
 
   document.getElementById('awe-panel-toggle').addEventListener('click', function () {
