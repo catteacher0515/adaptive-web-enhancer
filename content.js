@@ -113,6 +113,15 @@
       { key: 'g73qpkqhq9g5pt4fnuinr6g0sphse0', desc: '美国顶流直播网红 Speed 穿青色中式长衫，搭黑裤被围拍' },
       { key: 'g73qpkqhqa05pt4fnuinr6gb1pe3sg', desc: '美国顶流直播网红 Speed 在夜景高楼前腾空完成后空翻，背景为灯光璀璨的城市天际线' },
       { key: 'g73qpkqhqag5pt4fnuinr6gqoke8i0', desc: '中国网红歌手田一铭与美国顶流直播网红 Speed 一起拿着矿泉水互动，水柱从瓶口喷出，两人表情夸张兴奋，背景是城市高楼与户外平台' },
+      { key: 'g73qpkqhqb05pt4fnuinr6g4f0ki50', desc: '中国演员王迅与美国顶流直播网红 Speed 在车内贴脸合影，Speed夸张吐舌比手势，王迅做出搞怪表情，两人氛围轻松搞笑，画面下方有"到此中国行结束"的字幕' },
+      { key: 'g73qpkqhqbg5pt4fnuinr6g05u2130', desc: 'Speed身穿灰色僧服、系着黄色腰带，剃光头造型正在练习基础武术动作，一名少林武术教练在其身后用手调整姿势、纠正发力细节' },
+      { key: 'g73qpkqhqc05pt4fnuinr6g7ujdli8', desc: '大张伟身穿蓝色拼接外套与身穿亮粉色T恤的Speed并肩合影，二人肩搭着肩，背景中围着不少举着手机拍摄的围观人群' },
+      { key: 'g73qpkqhqcg5pt4fnuinr6gl9keafo', desc: '多方向指示牌竖立在山顶平台，标注通往北京、阿姆斯特丹、迪拜、伦敦等世界各地城市的方向与距离，Speed靠在指示牌下方' },
+      { key: 'g73qpkqhqd05pt4fnuinr6gjq8dscg', desc: '川剧变脸演员身穿红黑相间传统戏服、头戴金色头冠，脸部覆盖白底红黑纹样面具；一旁的Speed张大嘴巴惊呼，表情夸张' },
+      { key: 'g73qpkqhqdg5pt4fnuinr6g4pqgqg0', desc: 'Speed身穿红色花纹西装站在故宫博物院前，身后是宫殿式建筑与"故宫博物院"牌匾，两侧保镖双手交叉站立形成对称构图' },
+      { key: 'g73qpro1u005pt4fnuinr6gpa9cf30', desc: 'Speed坐在海边栏杆旁回头看向镜头，远处是高密度城市天际线与灯光倒映在水面的夜景' },
+      { key: 'g73qpro1u0g5pt4fnuinr6gs7oal8g', desc: 'Speed站在室内实验环境中与一台人形机器人并列，背景中还能看到多台同类型设备与工业装置' },
+      { key: 'g73qpro1u105pt4fnuinr6gknhol4o', desc: '写有"MISSING"的海报被人群举起，海报由Speed的四张不同表情的黑白照片拼接而成，呈现出带有幽默与互动意味的街头应援氛围' },
     ],
   };
 
